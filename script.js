@@ -1,7 +1,10 @@
+let imageList = []; // Simpan hasil gambar PDF
+
 // === PDF ➝ IMAGES ===
-document.getElementById('pdfUpload').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+document.getElementById('convertPdf').addEventListener('click', async () => {
+  const fileInput = document.getElementById('pdfUpload');
+  const file = fileInput.files[0];
+  if (!file) return alert("Please upload a PDF first!");
 
   const pdfjsLib = window['pdfjs-dist/build/pdf'];
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js';
@@ -11,6 +14,7 @@ document.getElementById('pdfUpload').addEventListener('change', async (e) => {
 
   const pdfResult = document.getElementById('pdfResult');
   pdfResult.innerHTML = "";
+  imageList = [];
 
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
     const page = await pdf.getPage(pageNum);
@@ -23,11 +27,37 @@ document.getElementById('pdfUpload').addEventListener('change', async (e) => {
 
     await page.render({ canvasContext: context, viewport }).promise;
 
-    const img = document.createElement('img');
-    img.src = canvas.toDataURL("image/png");
+    const imgData = canvas.toDataURL("image/png");
 
+    // simpan ke list untuk ZIP
+    imageList.push({ name: `page_${pageNum}.png`, data: imgData });
+
+    // tampilkan di halaman
+    const img = document.createElement('img');
+    img.src = imgData;
     pdfResult.appendChild(img);
   }
+
+  if (imageList.length > 0) {
+    document.getElementById('downloadZip').style.display = "inline-block";
+  }
+});
+
+// === DOWNLOAD ZIP ===
+document.getElementById('downloadZip').addEventListener('click', async () => {
+  if (imageList.length === 0) return alert("No images to download!");
+
+  const zip = new JSZip();
+  const imgFolder = zip.folder("images");
+
+  for (let img of imageList) {
+    // convert base64 ke binary
+    const base64Data = img.data.split(',')[1];
+    imgFolder.file(img.name, base64Data, { base64: true });
+  }
+
+  const content = await zip.generateAsync({ type: "blob" });
+  saveAs(content, "pdf_images.zip");
 });
 
 // === IMAGES ➝ PDF ===
