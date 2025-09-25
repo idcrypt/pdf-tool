@@ -5,21 +5,15 @@
   <title>PDF ↔ Image Converter</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-  <style>
-    body { font-family: Arial, sans-serif; background:#111; color:#fff; text-align:center; padding:20px; }
-    h1 { color:#00e0ff; }
-    .container { margin:20px auto; max-width:600px; background:#222; padding:20px; border-radius:12px; }
-    input { margin:10px 0; }
-    canvas, img { max-width:100%; margin-top:10px; border:1px solid #444; }
-    button { background:#00e0ff; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; margin-top:10px; }
-    button:hover { background:#00b8cc; }
-  </style>
 </head>
 <body>
   <h1>PDF ↔ Image Converter</h1>
+
   <div class="container">
     <h3>PDF ➝ Images</h3>
     <input type="file" id="pdfUpload" accept="application/pdf">
+    <button id="convertPdf">Convert to Images</button>
+    <button id="downloadZip" style="display:none;">Download ZIP</button>
     <div id="pdfResult"></div>
   </div>
 
@@ -33,6 +27,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
   <!-- pdf-lib (create PDF) -->
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <!-- JSZip (buat ZIP download) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- FileSaver (download ZIP) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
